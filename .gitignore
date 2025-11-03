@@ -1,0 +1,12 @@
+/output
+/build
+/submodules
+/data
+
+*.pyc
+*.npz
+*.ply
+*.cdf
+*.json
+*.txt
+*.sh 

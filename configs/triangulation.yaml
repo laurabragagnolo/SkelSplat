@@ -1,0 +1,19 @@
+
+defaults:
+  - _self_
+
+hydra:
+  run:
+    dir: "experiments/triangulation-panoptic/${now:%Y-%m-%d}/${now:%H-%M-%S}"
+
+dataset:
+  data_root: "data/panoptic"
+  initial_guess: "triang_metrabs" # actually not used in triangulation
+  poses_2d: "metrabs"  # gt | metrabs | resnet | cpn
+  start_scene_id: 0
+  end_scene_id: -1  
+  frame_step: 1
+  nviews: 4
+
+debug:
+  save_iterations: [0]

@@ -1,0 +1,75 @@
+
+defaults:
+  - _self_
+
+hydra:
+  run:
+    dir: "experiments/panoptic/${now:%Y-%m-%d}/${now:%H-%M-%S}"
+
+dataset:
+  data_root: "data/panoptic"
+  initial_guess: "triang_metrabs" # gt | metrabs | triang_metrabs
+  poses_2d: "metrabs"  # gt | metrabs
+  start_scene_id: 0
+  end_scene_id: -1 # total number of scenes in dataset
+  frame_step: 1
+  nviews: 4 # number of views to use for optimization
+
+training:
+  quiet: true
+  std_dev_noise: 0.0
+  dropout: false
+  accumulation_steps: 4
+  loss_function: "l2_gaussian"
+  lambda_loss_function: 0.05  # used only if loss function is combination of multiple losses
+  consistency_loss: "3D_length_consistency" # none | limb_consistency
+  lambda_consistency: 1e-5
+  early_stopping: "no_stopping"  # opt_early_stopping | no_stopping
+  
+debug:
+  save_iterations: [500]
+  save_images: true
+
+model:
+  sh_degree: 1
+  resolution: -1
+  white_background: false
+  train_test_exp: false
+  data_device: "cuda"
+  eval: false
+  opacity_on: true
+  scaling: 3
+  scaling_modifier: 1.0
+
+pipeline:
+  rendering: diff-gaussian-rasterization-panoptic  # diff-gaussian-rasterization | diff-gaussian-rasterization-no-depth
+  convert_SHs_python: false
+  compute_cov3D_python: false
+  debug: false
+  antialiasing: false
+
+optimization:
+  iterations: 500
+  position_lr_init: 0.005
+  position_lr_final: 0.000005
+  position_lr_delay_mult: 0.0
+  position_lr_max_steps: 4000
+  feature_lr: 0.0
+  opacity_lr: 0.005
+  scaling_lr: 0.005
+  rotation_lr: 0.001
+  exposure_lr_init: 0.01
+  exposure_lr_final: 0.001
+  exposure_lr_delay_steps: 0
+  exposure_lr_delay_mult: 0.0
+  percent_dense: 0.01
+  lambda_dssim: 0.2
+  densification_interval: 100
+  opacity_reset_interval: 3000
+  densify_from_iter: 500
+  densify_until_iter: 15000
+  densify_grad_threshold: 0.0002
+  depth_l1_weight_init: 1.0
+  depth_l1_weight_final: 0.01
+  random_background: false
+  optimizer_type: "default"
