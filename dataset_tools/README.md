@@ -94,7 +94,7 @@ cd dataset_tools
 python preprocess_triang_initial_guess.py 
 ```
 
-Alternatively, you can use as initial guess the fusion of 3D monocular detections given by Metrabs, following [this work] (https://link.springer.com/chapter/10.1007/978-3-031-92591-7_8).
+Alternatively, you can use as initial guess the fusion of 3D monocular detections given by Metrabs, following [this work](https://link.springer.com/chapter/10.1007/978-3-031-92591-7_8).
 You can do this by simply using this script:
 ```bash
 cd h36m
@@ -103,15 +103,15 @@ python compute_initial_guess.py
 
 ## Human3.6M-Occ
 
-Generate occluded versions (Occ-2 / Occ-3 / Occ-3-Hard) of Human3.6M following [this repo] (https://github.com/laurabragagnolo/human3.6m-occluded).
+Generate occluded versions (Occ-2 / Occ-3 / Occ-3-Hard) of Human3.6M following [this repo](https://github.com/laurabragagnolo/human3.6m-occluded).
 Organize data and produce initial guess following the procedure described for Human3.6M.
 
 ## Panoptic
 
 ### 1. Prerequisites
 
-* Download [CMU Panoptic Dataset] (http://domedb.perception.cs.cmu.edu/).
-* We use only single-person sequences, following [this work] (http://domedb.perception.cs.cmu.edu/mtc.html). Test sequences include: 171204_pose5, 171204_pose6.
+* Download [CMU Panoptic Dataset](http://domedb.perception.cs.cmu.edu/).
+* We use only single-person sequences, following [this work](http://domedb.perception.cs.cmu.edu/mtc.html). Test sequences include: 171204_pose5, 171204_pose6.
 * We select a total of 8 cameras (more details in the paper): "00_01", "00_02", "00_10", "00_13", "00_03", "00_23", "00_19", "00_30".
 
 Assumed layout:
@@ -159,7 +159,7 @@ Create initial guess 3D poses using either monocular 3D pose fusion or simple tr
 
 ### 1. Prerequisites
 
-* Download [Occlusion-Person] (https://github.com/zhezh/occlusion_person).
+* Download [Occlusion-Person](https://github.com/zhezh/occlusion_person).
 
 ### 2. Organize Ground Truth
 
