@@ -1,4 +1,4 @@
-# Data Preprocessing
+# ⚙️ Data Preprocessing
 
 This folder contains dataset-specific preprocessing utilities used to prepare inputs for training and evaluation.
 
@@ -9,12 +9,11 @@ It standardizes:
 * **2D keypoints** aggregation per view
 * **Initial 3D pose guesses** (from monocular 3D or triangulation)
 
-## Human3.6M
+## Human3.6M Dataset
 
-### 1. Prerequisites
+**1. Preliminaries**
 
-* Download & structure Human3.6M using [h36m-fetch](https://github.com/anibali/h36m-fetch/tree/master).
-* Only test subjects (S9 and S11) required.
+Download & structure Human3.6M using [h36m-fetch](https://github.com/anibali/h36m-fetch/tree/master). Only test subjects (S9 and S11) required.
 
 Assumed layout (typical from h36m-fetch):
 
@@ -33,7 +32,7 @@ Assumed layout (typical from h36m-fetch):
 └── Release-v1.2/...
 ```
 
-### 2. Organize Ground Truth
+**2. Organize Ground Truth**
 
 Parse subjects/actions, camera intrinsics/extrinsics, and 3D joints into the unified schema.
 
@@ -71,7 +70,7 @@ data
             ...
 ```
 
-### 3. Get 2D Keypoints per View
+**3. Get 2D Keypoints per View**
 
 Obtain 2D detections for every camera and frame (e.g., ResNet as in [AdaFuse](https://github.com/zhezh/adafuse-3d-human-pose), CPN as in [VideoPose3D](https://github.com/facebookresearch/VideoPose3D/blob/main/DATASETS.md), or [Metrabs](https://github.com/isarandi/metrabs)). Note that Metrabs will generate predictions for both 2D and 3D poses per view and frame.
 Organize such data using the provided scripts into the same format used for GT.
@@ -83,7 +82,7 @@ python preprocess_metrabs_predictions.py
 
 You are free to use your own detector; only the on-disk format matters.
 
-### 4. Initial Guess
+**4. Generate 3D Initial Guess**
 Create initial guess 3D poses using either monocular 3D pose fusion or simple triangulation of extracted 2D poses
 For triangulation:
 ```bash
@@ -101,18 +100,18 @@ cd h36m
 python compute_initial_guess.py
 ```
 
-## Human3.6M-Occ
+## Human3.6M-Occ Dataset
 
 Generate occluded versions (Occ-2 / Occ-3 / Occ-3-Hard) of Human3.6M following [this repo](https://github.com/laurabragagnolo/human3.6m-occluded).
 Organize data and produce initial guess following the procedure described for Human3.6M.
 
-## Panoptic
+## CMU Panoptic Dataset
 
-### 1. Prerequisites
+**1. Preliminaries**
 
-* Download [CMU Panoptic Dataset](http://domedb.perception.cs.cmu.edu/).
-* We use only single-person sequences, following [this work](http://domedb.perception.cs.cmu.edu/mtc.html). Test sequences include: 171204_pose5, 171204_pose6.
-* We select a total of 8 cameras (more details in the paper): "00_01", "00_02", "00_10", "00_13", "00_03", "00_23", "00_19", "00_30".
+Download [CMU Panoptic Dataset](http://domedb.perception.cs.cmu.edu/).
+We use only single-person sequences, following [this work](http://domedb.perception.cs.cmu.edu/mtc.html). Test sequences include: 171204_pose5, 171204_pose6.
+We select a total of 8 cameras (more details in the paper): "00_01", "00_02", "00_10", "00_13", "00_03", "00_23", "00_19", "00_30".
 
 Assumed layout:
 
@@ -132,7 +131,7 @@ Assumed layout:
     ...
 ```
 
-### 2. Organize Ground Truth
+**2. Organize Ground Truth**
 
 Parse 3D ground truth and create 2D ground truth via reprojection on each view:
 
@@ -143,7 +142,7 @@ python preprocess_panoptic_gt.py
 
 We take "S0" as fake subject to keep a structure similar to the one obtained for the other datasets.
 
-### 3. Get 2D Keypoints per View
+**3. Get 2D Keypoints per View**
 
 Obtain 2D detections for every camera and frame using [Metrabs](https://github.com/isarandi/metrabs).
 Organize such data using the provided scripts.  
@@ -152,16 +151,16 @@ python preprocess_metrabs_predictions.py
 python filter_preds_number_views.py    # to ensure that each view is associated to a detection (not None)
 ```
 
-### 4. Initial Guess
+**4. Generate 3D Initial Guess**
 Create initial guess 3D poses using either monocular 3D pose fusion or simple triangulation of extracted 2D poses, as described for Human3.6M.
 
-## Occlusion-Person
+## Occlusion-Person Dataset
 
-### 1. Prerequisites
+**1. Preliminaries**
 
-* Download [Occlusion-Person](https://github.com/zhezh/occlusion_person).
+Download [Occlusion-Person](https://github.com/zhezh/occlusion_person).
 
-### 2. Organize Ground Truth
+**2. Organize Ground Truth**
 
 Parse ground truth and obtain consistent structure as done for other datasets.
 
@@ -172,7 +171,7 @@ python preprocess_occlusion_person_gt.py
 
 We take "S0" as fake subject to keep a structure similar to the one obtained for the other datasets.
 
-### 3. Get 2D Keypoints per View
+**3. Get 2D Keypoints per View**
 
 Obtain 2D detections for every camera and frame using a ResNet, as done in [AdaFuse](https://github.com/zhezh/adafuse-3d-human-pose).
 Organize such data using the provided scripts.  
@@ -180,5 +179,15 @@ Organize such data using the provided scripts.
 python preprocess_resnet_2d_poses.py
 ```
 
-### 4. Initial Guess
+**4. Generate 3D Initial Guess**
 Create initial guess via simple triangulation of extracted 2D poses, as described for Human3.6M.
+
+## 🔎 Check your data
+
+To check and visualize your preprocessed 2D and 3D data, use the scripts available in the `dataset_tools/` directory.
+
+```bash
+python check_2d_dataset.py --gt_dir /your/path/to/gt_2d --pred_dir /your/path/to/pred_2d
+
+python check_3d_dataset.py --gt_dir /your/path/to/gt_3d --initial_guess_dir /your/path/to/guess_3d
+```

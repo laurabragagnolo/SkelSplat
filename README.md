@@ -5,7 +5,7 @@ Human pose is modeled as a skeleton of 3D Gaussians, one per joint, optimized vi
 
 ![Alt text](assets/framework.png)
 
-## Installation
+## 📦 Installation
 ```bash
 
 pip install -r requirements.txt
@@ -21,15 +21,18 @@ pip install submodules/diff-gaussian-rasterization-op
 ```
 
 
-## Data Preparation
+## ⚙️ Data Preparation
 
 SkelSplat has been tested on four datasets: Human3.6M, Human3.6M-Occ, CMU Panoptic and Occlusion-Person.
-For data preparation refer to [Data Preprocessing](dataset_tools/README.md).
+For data preparation refer to [Data Preprocessing](dataset_tools/README.md) and code provided in `dataset_tools/`.
 
-## How to run the code
+## 🚀 How to run the code
+
+Run and evaluate SkelSplat on your dataset simply using `train.py` and `eval.py`.
+Configuration files for the datasets used in our paper are available in the `configs/` directory (h36m.yaml, panoptic.yaml, etc.).
+
 ```bash
+python train.py --config-name <dataset>.yaml 
 
-python train.py --config-name h36m.yaml 
-python eval.py --config-name h36m.yaml
-
+python eval.py --config-name <dataset>.yaml
 ```
