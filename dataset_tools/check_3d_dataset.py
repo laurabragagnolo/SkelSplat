@@ -104,12 +104,12 @@ def compare_3d_data_and_plot(gt_data_dir, initial_guess_dir):
 def main():
     # Argument parser
     parser = argparse.ArgumentParser(description="Compare 3D GT data with Initial Guess data and plot.")
-    parser.add_argument("--gt_data_dir", type=str, default="../data/occlusion-person/3d_gt", help="Path to the 3D GT data directory.")
+    parser.add_argument("--gt_dir", type=str, default="../data/occlusion-person/3d_gt", help="Path to the 3D GT data directory.")
     parser.add_argument("--initial_guess_dir", type=str, default="../data/occlusion-person/initial_guess/triang_resnet", help="Path to the Initial Guess data directory.")
     args = parser.parse_args()
 
     # Run the comparison and plotting
-    compare_3d_data_and_plot(args.gt_data_dir, args.initial_guess_dir)
+    compare_3d_data_and_plot(args.gt_dir, args.initial_guess_dir)
 
 if __name__ == "__main__":
     main()
