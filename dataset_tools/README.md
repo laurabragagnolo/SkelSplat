@@ -83,6 +83,7 @@ python preprocess_metrabs_predictions.py
 You are free to use your own detector; only the on-disk format matters.
 
 **4. Generate 3D Initial Guess**
+
 Create initial guess 3D poses using either monocular 3D pose fusion or simple triangulation of extracted 2D poses
 For triangulation:
 ```bash
@@ -152,6 +153,7 @@ python filter_preds_number_views.py    # to ensure that each view is associated 
 ```
 
 **4. Generate 3D Initial Guess**
+
 Create initial guess 3D poses using either monocular 3D pose fusion or simple triangulation of extracted 2D poses, as described for Human3.6M.
 
 ## Occlusion-Person Dataset
@@ -180,6 +182,7 @@ python preprocess_resnet_2d_poses.py
 ```
 
 **4. Generate 3D Initial Guess**
+
 Create initial guess via simple triangulation of extracted 2D poses, as described for Human3.6M.
 
 ## 🔎 Check your data
