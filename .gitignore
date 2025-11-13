@@ -1,6 +1,5 @@
 /output
 /build
-/submodules
 /data
 
 *.pyc
