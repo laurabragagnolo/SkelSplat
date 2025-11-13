@@ -10,7 +10,7 @@ Human pose is modeled as a skeleton of 3D Gaussians, one per joint, optimized vi
 
 pip install -r requirements.txt
 
-git clone https://github.com/laurabragagnolo/gaussian-hpe --recurse-submodules
+git clone https://github.com/laurabragagnolo/SkelSplat.git --recurse-submodules
 
 pip install submodules/fused-ssim
 pip install submodules/simple-knn
