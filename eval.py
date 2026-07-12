@@ -26,7 +26,7 @@ def get_pred_coords_h36m(ply_dir, sorted_entries, absolute=False, cpn=False):
     for entry in sorted_entries:
         subject, activity, frame = entry
         if absolute:
-            if subject == 'S9' and activity in ['SittingDown 1', 'Waiting 1', 'Greeting']:
+            if subject == 'S9' and activity in ['SittingDown 1', 'Waiting 1', 'Greeting']: # 相同但被有兩種的分成一類
                 continue
         ply_file = f'{ply_dir}/{subject}_{activity}_{frame}'
         pcd = o3d.io.read_point_cloud(ply_file)
@@ -54,25 +54,24 @@ def get_pred_coords(ply_dir, sorted_entries, absolute=False):
 
 def get_gt_poses_h36m(gt_path, absolute=False, cpn=False, frame_step=64):
     gt_poses = []
-    for subject in sorted(os.listdir(gt_path)):
+    for subject in sorted(os.listdir(gt_path)): # sorted()：字母順序排序，確保每次執行這個函式，走訪順序都是固定、可重現的
         if not subject.startswith('S'):
             continue
         for activity in sorted(os.listdir(f'{gt_path}/{subject}')):
             if absolute:
                 if subject == 'S9' and activity in ['SittingDown 1', 'Waiting 1', 'Greeting']:
                     continue
-            if cpn:
+            if cpn: # 跳過缺失資料
                 if subject == 'S11' and activity == 'Directions':
                     continue
             gt_3d = np.load(f'{gt_path}/{subject}/{activity}/poses.npz')['poses']
-            gt_sampled = gt_3d[::frame_step]
+            gt_sampled = gt_3d[::frame_step] # 每隔 frame_step（預設 64）幀取一幀
             gt_poses.append(gt_sampled)
-    gt_poses = np.concatenate(gt_poses, axis=0)
-    return gt_poses
+    gt_poses = np.concatenate(gt_poses, axis=0) # 把裡面所有小陣列沿著第 0 維（幀這一維）首尾相接、拼成一個單一的大陣列，形狀變成 (全部 subject/activity 抽樣後的總幀數, n_joints, 3)
+    return gt_poses 
 
-
+# for panoptic／occlusion-person
 def get_gt_poses(gt_path, absolute=False, dataset="panoptic", frame_step=1, nviews=4):
-    
     gt_poses = []
     for subject in sorted(os.listdir(gt_path)):
         if not subject.startswith('S'):
@@ -89,7 +88,6 @@ def get_gt_poses(gt_path, absolute=False, dataset="panoptic", frame_step=1, nvie
     return gt_poses
 
 def evaluate(gt_path, output_path, iterations, start_id, end_id, cpn=False):
-
     for it in iterations:
         print(f"Results for {it} iterations \n")
         # load the predicted 3D poses
@@ -116,12 +114,12 @@ def evaluate(gt_path, output_path, iterations, start_id, end_id, cpn=False):
             absolute = True
             gt_coords = get_gt_poses_h36m(gt_path, absolute, cpn, frame_step=64)
             pred_coords, activities = get_pred_coords_h36m(ply_dir, sorted_entries, absolute, cpn)
-            if end_id > pred_coords.shape[0]:
+            if end_id > pred_coords.shape[0]: # 保護機制
                 end_id = pred_coords.shape[0]
 
             print("Evaluating scenes from", start_id, "to", end_id)
             abs_error = np.linalg.norm(gt_coords[start_id:end_id, ...] - pred_coords[start_id:end_id, ...], axis=-1)
-            abs_error_mean = np.mean(abs_error)
+            abs_error_mean = np.mean(abs_error) # 把所有幀、所有關節的誤差全部平均，就是標準定義的 MPJPE
             print("Absolute MPJPE: ", np.round(abs_error_mean, 2))
             activities_errors = [np.mean(abs_error[a == activities]) for a in ordered_activities]
             print(np.round(activities_errors, 2))
@@ -133,7 +131,7 @@ def evaluate(gt_path, output_path, iterations, start_id, end_id, cpn=False):
             if end_id < pred_coords.shape[0]:
                 end_id = pred_coords.shape[0]
             # align the root joint
-            gt_coords -= gt_coords[:, 0, np.newaxis]
+            gt_coords -= gt_coords[:, 0, np.newaxis] # 每一幀都減掉「第 0 號關節（根關節，通常是骨盆/髖部）的座標
             pred_coords -= pred_coords[:, 0, np.newaxis]
             rel_error = np.linalg.norm(gt_coords[start_id:end_id, ...] - pred_coords[start_id:end_id, ...], axis=-1)
             rel_error_mean = np.mean(rel_error)
@@ -143,8 +141,7 @@ def evaluate(gt_path, output_path, iterations, start_id, end_id, cpn=False):
             print("\n")
 
         else:
-
-            # Absolute MPJPE
+            # Absolute MPJPE of panoptic／occlusion-person
             absolute = True
             gt_coords = get_gt_poses(gt_path, absolute, dataset, frame_step=1)
             pred_coords = get_pred_coords(ply_dir, sorted_entries, absolute)
@@ -156,7 +153,7 @@ def evaluate(gt_path, output_path, iterations, start_id, end_id, cpn=False):
             abs_error_mean = np.mean(abs_error)
             print("Absolute MPJPE: ", np.round(abs_error_mean, 2))
 
-            # Relative MPJPE
+            # Relative MPJPE of panoptic／occlusion-person
             absolute = False
             gt_coords = get_gt_poses(gt_path, absolute, dataset, frame_step=1)
             pred_coords = get_pred_coords(ply_dir, sorted_entries, absolute)
@@ -174,8 +171,8 @@ def evaluate(gt_path, output_path, iterations, start_id, end_id, cpn=False):
 
 @hydra.main(version_base=None, config_path="configs", config_name="configs")
 def main(cfg: DictConfig):
-
-    if "training" in cfg: 
+    # 判斷這是一般訓練設定檔還是三角測量設定檔
+    if "training" in cfg:  
         config = ConfigHandler(cfg)
     else:
         config = TriangulationConfigHandler(cfg)
